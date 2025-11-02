@@ -1,0 +1,1 @@
+pyinstaller --onefile --windowed --name="错题工具" --icon=icon.ico wrong_question_tool.py

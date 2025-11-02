@@ -1,0 +1,81 @@
+# 错题整理工具 - Makefile
+# 作者：mmm
+
+.PHONY: install test run build clean help
+
+# 默认目标
+help:
+	@echo "错题整理工具 - Makefile"
+	@echo "========================="
+	@echo ""
+	@echo "可用命令:"
+	@echo "  make install    - 安装依赖"
+	@echo "  make test       - 运行测试"
+	@echo "  make run        - 运行程序"
+	@echo "  make build      - 打包程序"
+	@echo "  make clean      - 清理临时文件"
+	@echo "  make help       - 显示帮助信息"
+	@echo ""
+	@echo "作者：mmm"
+	@echo "赞助链接：https://gitee.com/orangearc655743/Wrong-Question-Tool.git"
+
+# 安装依赖
+install:
+	@echo "安装Python依赖..."
+	pip3 install -r requirements.txt
+	@echo "安装Tesseract OCR..."
+	@if command -v apt-get >/dev/null 2>&1; then \
+		sudo apt-get update && sudo apt-get install -y tesseract-ocr tesseract-ocr-chi-sim; \
+	elif command -v yum >/dev/null 2>&1; then \
+		sudo yum install -y tesseract tesseract-langpack-chi-sim; \
+	elif command -v brew >/dev/null 2>&1; then \
+		brew install tesseract; \
+	else \
+		echo "请手动安装Tesseract OCR"; \
+	fi
+	@echo "创建程序目录..."
+	mkdir -p CuoTi
+	@echo "安装完成！"
+
+# 运行测试
+test:
+	@echo "运行系统测试..."
+	python3 test.py
+
+# 运行程序
+run:
+	@echo "启动错题整理工具..."
+	chmod +x start.sh
+	./start.sh
+
+# 打包程序
+build:
+	@echo "打包程序..."
+	python3 build.py
+
+# 清理临时文件
+clean:
+	@echo "清理临时文件..."
+	find . -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
+	find . -name "*.pyc" -delete 2>/dev/null || true
+	rm -rf build/ dist/ *.spec 2>/dev/null || true
+	@echo "清理完成！"
+
+# 开发模式安装
+dev-install:
+	@echo "安装开发依赖..."
+	pip3 install -r requirements.txt
+	pip3 install pyinstaller black flake8 pytest
+	@echo "开发环境设置完成！"
+
+# 格式化代码
+format:
+	@echo "格式化代码..."
+	black *.py
+	@echo "格式化完成！"
+
+# 检查代码
+lint:
+	@echo "检查代码..."
+	flake8 *.py
+	@echo "检查完成！"
